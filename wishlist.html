@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Birthday Wishes 🎀</title>
+<style>
+body {
+  margin:0;
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  background: linear-gradient(180deg,#ffe8f3,#ffd0eb);
+  overflow:hidden;
+  font-family: 'Comic Sans MS', cursive, sans-serif;
+}
+.main-box {
+  width:120px; height:120px;
+  background: #ff77ba;
+  border-radius:16px;
+  display:flex; align-items:center; justify-content:center;
+  position:relative; cursor:pointer;
+  animation: heartbeat 1.2s infinite;
+  box-shadow:0 6px 20px rgba(255,50,180,0.4);
+}
+.main-box:hover{ transform:scale(1.05);}
+@keyframes heartbeat{0%,100%{transform:scale(1);}50%{transform:scale(1.1);}}
+.click-me { position:absolute; bottom:-20px; font-size:14px; font-weight:bold; color:#fff; background:#ff4f8a; padding:4px 10px; border-radius:12px; }
+.wish-container { margin-top:30px; display:flex; gap:16px; flex-wrap:wrap; justify-content:center; }
+.wish-box {
+  width:140px; height:140px; background:#ffcce6; border-radius:16px;
+  display:flex; align-items:center; justify-content:center; flex-direction:column; padding:8px;
+  box-shadow:0 6px 18px rgba(255,50,180,0.3); position:relative;
+}
+.wish-box textarea { width:100%; height:60px; border:none; border-radius:8px; padding:6px; resize:none; font-family:'Comic Sans MS', cursive; font-size:12px; text-align:center; }
+.wish-box button { margin-top:6px; padding:4px 10px; border:none; border-radius:8px; background:#ff4f8a; color:#fff; cursor:pointer; font-weight:bold; font-size:12px; }
+#giftImg { width:80px; height:80px; border-radius:16px; position:absolute; top:-100px; display:none; box-shadow:0 6px 20px rgba(255,50,180,0.4); }
+.summary-box { display:none; margin-top:40px; width:500px; min-height:160px; background: linear-gradient(135deg,#fff0fb,#ffcce6); border-radius:16px; padding:16px; font-size:14px; font-weight:bold; font-style:italic; color:#000; text-align:center; box-shadow:0 8px 24px rgba(255,50,180,0.3);}
+.final-msg { font-size:24px; font-weight:bold; color:#ff1ab5; margin-top:20px; text-align:center; }
+#finalBtn { display:none; margin-top:20px; padding:12px 22px; border-radius:20px; border:none; font-weight:bold; background:#ff69b4; color:white; cursor:pointer; box-shadow:0 6px 18px rgba(255,50,180,0.3);}
+</style>
+</head>
+<body>
+
+<div class="main-box" id="mainBox">
+  <div class="click-me">Click Me 🎀</div>
+  <img src="img3.jpeg" id="giftImg" alt="Gift Image">
+</div>
+
+<div class="wish-container" id="wishContainer"></div>
+<div class="summary-box" id="summaryBox"></div>
+<button id="finalBtn">Coffeeee Click Me ☕</button>
+
+<script>
+const mainBox = document.getElementById('mainBox');
+const giftImg = document.getElementById('giftImg');
+const wishContainer = document.getElementById('wishContainer');
+const summaryBox = document.getElementById('summaryBox');
+const finalBtn = document.getElementById('finalBtn');
+
+// Main box click
+mainBox.addEventListener('click', ()=>{
+  mainBox.querySelector('.click-me').style.display='none';
+  giftImg.style.display='block';
+
+  for(let i=0;i<5;i++){
+    const box=document.createElement('div');
+    box.className='wish-box';
+    box.innerHTML=`<textarea placeholder="Wish ${i+1} 💌"></textarea><button>Submit</button>`;
+    wishContainer.appendChild(box);
+
+    const btn = box.querySelector('button');
+    const ta = box.querySelector('textarea');
+
+    btn.addEventListener('click', ()=>{
+      const wish = ta.value.trim();
+      if(!wish) return;
+      ta.disabled=true; btn.disabled=true;
+
+      const line = document.createElement('div');
+      line.textContent = `🎀 ${wish}`;
+      summaryBox.appendChild(line);
+      summaryBox.style.display='block';
+
+      const allDone = [...wishContainer.children].every(b => b.querySelector('textarea').disabled);
+      if(allDone){
+        const finalMsg = document.createElement('div');
+        finalMsg.className='final-msg';
+        finalMsg.innerHTML="💖 You have to struggle to complete these wishes! 💖";
+        summaryBox.appendChild(finalMsg);
+        finalBtn.style.display='block';
+      }
+    });
+  }
+});
+
+// Final button click - send wishes
+finalBtn.addEventListener('click', ()=>{
+  const wishes=[...summaryBox.children].map(d=>d.textContent);
+  console.log('Wishes:', wishes);
+  
+  // Example fetch - replace URL with your server endpoint to email
+  fetch('YOUR_SERVER_ENDPOINT_HERE', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({wishes})
+  }).then(res=>{
+    if(res.ok) alert('Wishes sent! 💌');
+    else alert('Error sending wishes 😢 chlo kaam kro ab..rs kmaao or bejo mko  ');
+  });
+});
+</script>
+</body>
+</html>

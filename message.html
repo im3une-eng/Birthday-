@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Happy Birthday Cutie 🎂💖</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  body {
+    margin:0;
+    min-height:100vh;
+    overflow:hidden;
+    font-family: "Poppins", sans-serif;
+    background: radial-gradient(circle at 50% 50%, #0b0b1e, #030012 100%);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    color:white;
+  }
+
+  /* Stars */
+  .star {
+    position:absolute;
+    width:2px; height:2px;
+    background:white;
+    border-radius:50%;
+    opacity:0.8;
+    animation: twinkle 3s infinite alternate;
+  }
+  @keyframes twinkle { 0%{opacity:0.2} 100%{opacity:1} }
+
+  /* Balloons */
+  .balloon {
+    position:absolute;
+    width:40px; height:60px;
+    border-radius:50% 50% 50% 50%;
+    opacity:0.9;
+    animation: floatUp linear infinite;
+    text-align:center;
+    font-size:30px;
+  }
+  @keyframes floatUp {
+    0% { transform: translateY(100vh) rotate(0deg); }
+    100% { transform: translateY(-30vh) rotate(360deg); }
+  }
+
+  /* Confetti */
+  .confetti {
+    position:absolute;
+    width:8px; height:8px;
+    border-radius:50%;
+    animation: confettiFall linear infinite;
+  }
+  @keyframes confettiFall {
+    0% { transform: translateY(-10px) rotate(0deg); }
+    100% { transform: translateY(110vh) rotate(360deg); }
+  }
+
+  /* Story container */
+  .story-container {
+    position:absolute;
+    bottom:10px;
+    max-width:600px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    z-index:10;
+  }
+  .story-line {
+    opacity:0;
+    margin:8px 0;
+    text-align:center;
+    font-size:16px;
+    line-height:1.6;
+    color:#ffe8f0;
+    transform: translateY(20px);
+    transition: opacity 1s ease, transform 1.2s ease;
+  }
+
+  /* Fireworks Canvas */
+  #fx {
+    position:fixed; inset:0;
+    width:100%; height:100%;
+    pointer-events:none;
+    z-index:0;
+  }
+
+  /* Next Button */
+  #nextBtn{
+    position:fixed;
+    bottom:20px;
+    right:20px;
+    padding:12px 24px;
+    border:none;
+    border-radius:28px;
+    background:#ff5aa8;
+    color:white;
+    font-weight:700;
+    cursor:pointer;
+    box-shadow:0 6px 18px rgba(255,90,168,0.25);
+    z-index:10;
+  }
+</style>
+</head>
+<body>
+
+<canvas id="fx"></canvas>
+
+<!-- Stars -->
+<div id="stars"></div>
+
+<!-- Balloons container -->
+<div id="balloons"></div>
+
+<!-- Confetti container -->
+<div id="confetti"></div>
+
+<!-- Story container -->
+<div class="story-container" id="storyContainer"></div>
+
+<!-- Next Button -->
+<button id="nextBtn">Next Surprise 💖</button>
+
+<!-- Audio -->
+<audio id="bgMusic" loop>
+  <source src="nani.mp3" type="audio/mp3">
+</audio>
+
+<script>
+/* ---------------- Stars ---------------- */
+const starsContainer = document.getElementById('stars');
+for(let i=0;i<80;i++){
+  const s = document.createElement('div');
+  s.className = 'star';
+  s.style.left = Math.random()*100 + 'vw';
+  s.style.top = Math.random()*100 + 'vh';
+  s.style.width = s.style.height = (Math.random()*2+1)+'px';
+  starsContainer.appendChild(s);
+}
+
+/* ---------------- Balloons ---------------- */
+const balloonsContainer = document.getElementById('balloons');
+const colors = ['#ff5aa8','#ffb3d9','#f9a825','#ff77ba','#ffe066'];
+for(let i=0;i<12;i++){
+  const b = document.createElement('div');
+  b.className = 'balloon';
+  b.style.left = Math.random()*90 + 'vw';
+  b.style.background = colors[Math.floor(Math.random()*colors.length)];
+  b.style.animationDuration = (10 + Math.random()*8)+'s';
+  b.textContent = '🎈';
+  balloonsContainer.appendChild(b);
+}
+
+/* ---------------- Confetti ---------------- */
+const confettiContainer = document.getElementById('confetti');
+for(let i=0;i<40;i++){
+  const c = document.createElement('div');
+  c.className = 'confetti';
+  c.style.left = Math.random()*100 + 'vw';
+  c.style.background = colors[Math.floor(Math.random()*colors.length)];
+  c.style.animationDuration = (3 + Math.random()*3)+'s';
+  confettiContainer.appendChild(c);
+}
+
+/* ---------------- Story Lines ---------------- */
+const storyLines = [
+  "Once upon a time, two people met online…",
+  "Both carrying enough ego to start their own company 🙄🔥",
+  "Both thinking 'Online friendships? Huh, as if.' 😏",
+  "But look at us now 😭💖",
+  "You became a part of my daily routine without even asking.",
+  "You just walked in, made a place, sat in my brain, and refused to leave 😌",
+  "You do unnecessary drama 💅 and argue for no reason 🫠",
+  "Your brain takes the longest route before understanding anything 🤦‍♀️",
+  "BUT somehow… I still choose you every single day 🫶💗",
+  "Even though you always treat me like a big sister 😒",
+  "I'm really happy to have you, stupid 😌💗",
+  "Happy Birthday Cutie! 🎉✨",
+  "Your wishes come true and you are really special 💖"
+];
+
+const storyContainer = document.getElementById('storyContainer');
+storyLines.forEach((line)=>{
+  const div = document.createElement('div');
+  div.className = 'story-line';
+  div.textContent = line;
+  storyContainer.appendChild(div);
+});
+
+/* Show lines one by one */
+const lines = document.querySelectorAll('.story-line');
+let idx = 0;
+function showNextLine(){
+  if(idx < lines.length){
+    const line = lines[idx];
+    line.style.opacity = '1';
+    line.style.transform = 'translateY(0)';
+    idx++;
+    setTimeout(showNextLine, 1200); // delay between lines
+  }
+}
+showNextLine();
+
+/* ---------------- Fireworks Canvas ---------------- */
+const canvas = document.getElementById('fx');
+const ctx = canvas.getContext('2d');
+canvas.width = innerWidth; canvas.height = innerHeight;
+window.addEventListener('resize', ()=>{ canvas.width=innerWidth; canvas.height=innerHeight; });
+
+let particles = [];
+function spawnFirework(x,y){
+  const hue = Math.floor(Math.random()*360);
+  const count = 60;
+  for(let i=0;i<count;i++){
+    const a = Math.random()*Math.PI*2;
+    const speed = Math.random()*4+1;
+    particles.push({
+      x,y,
+      vx:Math.cos(a)*speed,
+      vy:Math.sin(a)*speed,
+      life: 60 + Math.round(Math.random()*30),
+      color:`hsl(${(hue+(Math.random()*60-30)).toFixed(0)},95%,${60+Math.random()*10}%)`,
+      size:2+Math.random()*2
+    });
+  }
+}
+
+function animFireworks(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  for(let i=particles.length-1;i>=0;i--){
+    const p = particles[i];
+    p.vy += 0.03;
+    p.x += p.vx;
+    p.y += p.vy;
+    p.life--;
+    ctx.fillStyle = p.color;
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
+    ctx.fill();
+    p.size *= 0.98;
+    if(p.life<=0) particles.splice(i,1);
+  }
+  requestAnimationFrame(animFireworks);
+}
+animFireworks();
+
+/* Fireworks on Tap */
+document.body.addEventListener('click', e=>{
+  spawnFirework(e.clientX, e.clientY);
+});
+
+/* ---------------- Next Button ---------------- */
+document.getElementById('nextBtn').addEventListener('click', ()=>{
+  location.href = 'gift.html'; // Redirect to next page
+});
+
+/* Play music automatically after short delay */
+setTimeout(()=>{ document.getElementById('bgMusic').play(); }, 1000);
+
+</script>
+</body>
+</html>

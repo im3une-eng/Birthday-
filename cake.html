@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Happy Birthday Coffeee 🎀</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<style>
+:root { --accent: #ff77ba; --bg1:#ffeef8; --bg2:#ffd6ec; }
+*{ box-sizing:border-box; }
+body{
+  margin:0; min-height:100vh; overflow:hidden;
+  font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Comic Sans MS", cursive;
+  background: linear-gradient(180deg, var(--bg1), var(--bg2));
+  display:flex; align-items:center; justify-content:center; flex-direction:column;
+  transition: background 1.4s ease;
+}
+body.night { background: radial-gradient(circle at 30% 80%, #160026 0%, #030012 60%); color: #fff; }
+
+/* title centered at top (typing but centered) */
+#title {
+  position: absolute; top:28px; left:50%; transform:translateX(-50%);
+  color: var(--accent); font-size:28px; font-weight:700; letter-spacing:0.6px;
+  text-shadow: 0 0 10px #ffd0ec;
+  white-space:nowrap; overflow:hidden; border-right:3px solid var(--accent);
+  width:0; animation: typing 3.2s steps(30) forwards, blink .7s step-end infinite;
+}
+@keyframes typing { to{ width:420px; } } 
+@keyframes blink { 50%{ border-color:transparent; } }
+
+/* clouds */
+.cloud{ position:absolute; background:#fff; width:220px; height:88px; border-radius:100px; filter:blur(6px); opacity:0.75; }
+.cloud::before,.cloud::after{ content:""; position:absolute; background:#fff; width:140px; height:88px; border-radius:100px; }
+.cloud::before{ left:-30px; top:-24px } .cloud::after{ right:-30px; top:-10px }
+.c1{ left:6%; top:8%; animation:moveClouds 36s linear infinite; }
+.c2{ right:6%; top:16%; width:260px; height:110px; animation:moveClouds 44s linear infinite; }
+.c3{ left:35%; top:6%; width:180px; height:80px; animation:moveClouds 50s linear infinite; }
+@keyframes moveClouds{ from{ transform:translateX(-300px);} to{ transform:translateX(120vw);} }
+
+/* cake wrapper and spacing */
+.cake-wrap{ width:360px; display:flex; align-items:center; justify-content:center; position:relative; z-index:8; margin-top:40px; }
+.cake{ width:280px; display:flex; flex-direction:column; align-items:center; gap:18px; position:relative; }
+.layer{ width: 280px; height:64px; border-radius:18px; box-shadow:0 12px 30px rgba(255,120,180,0.12); opacity:0; transform:translateY(18px) scale(.95); }
+.l1{ background: linear-gradient(180deg,#ffd6ec,#ffc5e6); animation:layerIn 700ms forwards 2200ms; }
+.l2{ background: linear-gradient(180deg,#ffe0f6,#ffc2ea); width:220px; animation:layerIn 700ms forwards 1400ms; }
+.l3{ background: linear-gradient(180deg,#fff0fb,#ffd9f0); width:180px; animation:layerIn 700ms forwards 600ms; }
+@keyframes layerIn { to{ opacity:1; transform:translateY(0) scale(1);} }
+
+/* icing / drip on top */
+.icing-strip{ position:absolute; top:-18px; left:0; width:100%; height:28px; background:rgba(255,255,255,0.95); border-radius:0 0 18px 18px; pointer-events:none; opacity:0; transform:translateY(-6px); animation:icing 700ms forwards 3000ms; }
+.drip{ position:absolute; top:-26px; left:8%; width:84%; height:34px; background:#fffafc; border-radius:20px; box-shadow:inset 0 -6px 10px rgba(0,0,0,0.02); animation:dripWave 1s ease-in-out 3000ms forwards; }
+@keyframes icing { to{ opacity:1; transform:translateY(0);} } 
+@keyframes dripWave { to{ transform:translateY(5px);} }
+
+/* candles row */
+.candles{ position:absolute; top:-112px; left:50%; transform:translateX(-50%); display:flex; gap:16px; opacity:0; }
+.candle{ width:14px; height:60px; background:#fff9fb; border-radius:6px; display:flex; align-items:flex-start; justify-content:center; position:relative; box-shadow:0 6px 12px rgba(255,120,180,0.08); }
+.flame{ width:18px; height:28px; background: radial-gradient(circle at 40% 30%, #fff3b0 10%, #ffd46f 35%, #ff7fb3 70%, transparent 90%); border-radius:50% 50% 40% 40%; transform-origin:center bottom; box-shadow:0 0 20px rgba(255,165,200,0.9); animation:bigGlow 0.9s infinite alternate ease-in-out; opacity:0; }
+@keyframes bigGlow { 0%{ transform:scale(1);} 100%{ transform:scale(1.25);} }
+
+/* blow text */
+#blowText { margin-top:18px; color:#ff5aa8; font-weight:600; font-size:18px; opacity:0; transform:translateY(6px); animation:blowTextIn 800ms 3200ms forwards; }
+@keyframes blowTextIn{ to{ opacity:1; transform:translateY(0);} }
+
+/* Next button hidden until blow */
+#nextBtn{ position:fixed; right:24px; bottom:22px; background:#ff69b4; color:white; border:none; padding:12px 20px; border-radius:26px; font-weight:700; cursor:pointer; box-shadow:0 6px 18px rgba(255,120,180,0.18); opacity:0; transform:translateY(18px); transition:0.4s; pointer-events:none; text-decoration:none; display:flex; align-items:center; justify-content:center; }
+#nextBtn.show{ opacity:1; transform:translateY(0); pointer-events:auto; }
+
+/* balloons container (will float up) */
+.balloon{ position: absolute; bottom: -120px; width: 46px; height: 64px; border-radius: 50% 50% 50% 50%; background: #ff8ac9; display:flex; align-items:flex-end; justify-content:center; box-shadow: 0 6px 14px rgba(0,0,0,0.12); }
+.string{ width:2px; height:60px; background: rgba(0,0,0,0.08); margin-bottom:-60px; }
+
+/* fireworks canvas */
+#fx{ position:fixed; inset:0; width:100%; height:100%; pointer-events:none; z-index:999; display:block; }
+
+/* responsive tweaks */
+@media (max-width:480px){
+  #title{ font-size:20px; }
+  .cake{ width:86vw; }
+  .layer{ width:86vw; }
+  .candles{ gap:10px; top:-98px;}
+}
+</style>
+</head>
+<body>
+
+<!-- Title -->
+<div id="title">Happy Birthday Coffeee ☕💗</div>
+
+<!-- Clouds -->
+<div class="cloud c1"></div>
+<div class="cloud c2"></div>
+<div class="cloud c3"></div>
+
+<!-- fireworks canvas -->
+<canvas id="fx"></canvas>
+
+<!-- Cake -->
+<div class="cake-wrap">
+  <div class="cake" id="cake">
+    <!-- candles (hidden until after layers show) -->
+    <div class="candles" id="candlesRow" aria-hidden="true"></div>
+
+    <!-- top layer -->
+    <div class="layer l3" id="layer3">
+      <div class="icing-strip"></div>
+      <div class="drip"></div>
+    </div>
+
+    <!-- middle layer -->
+    <div class="layer l2" id="layer2">
+      <div class="icing-strip"></div>
+    </div>
+
+    <!-- bottom layer -->
+    <div class="layer l1" id="layer1">
+      <div class="icing-strip"></div>
+    </div>
+
+    <div id="blowText">Close your eyes & blow softly 🌬️</div>
+  </div>
+</div>
+
+<!-- Next button (hidden initially, appears after blow) -->
+<a id="nextBtn" href="message.html">Yay! Go Ahead 🎀</a>
+
+<!-- audio -->
+<audio id="bgSong" src="brthdy.mp3" preload="auto"></audio>
+<audio id="blowSnd" src="blow-sound.mp3" preload="auto"></audio>
+
+<script>
+// typing title
+(function typeTitle(){
+  const text = "Happy Birthday Coffeee ☕💗";
+  const el = document.getElementById('title');
+  let i = 0;
+  function step(){
+    el.textContent = text.slice(0, i++);
+    if(i <= text.length) setTimeout(step, 75);
+  }
+  step();
+})();
+
+// create 5 candles
+const candlesRow = document.getElementById('candlesRow');
+for(let i=0;i<5;i++){
+  const c = document.createElement('div');
+  c.className = 'candle';
+  const f = document.createElement('div');
+  f.className = 'flame';
+  f.style.opacity = '0';
+  c.appendChild(f);
+  candlesRow.appendChild(c);
+}
+
+// show layers
+function showSequential(){
+  const l3 = document.getElementById('layer3');
+  const l2 = document.getElementById('layer2');
+  const l1 = document.getElementById('layer1');
+  const icingStrips = document.querySelectorAll('.icing-strip');
+  const candles = document.getElementById('candlesRow');
+
+  l3.style.animation = 'layerIn 700ms forwards';
+  setTimeout(()=>{ l2.style.animation='layerIn 700ms forwards'; }, 700);
+  setTimeout(()=>{ l1.style.animation='layerIn 700ms forwards'; }, 1500);
+  setTimeout(()=>{ icingStrips.forEach(s=> s.style.animation='icing 700ms forwards'); }, 2300);
+  setTimeout(()=>{ candles.style.opacity=1; fadeFlames(); }, 3000);
+}
+function fadeFlames(){
+  document.querySelectorAll('.flame').forEach((f, idx)=>{
+    setTimeout(()=>{ f.style.opacity=1; }, idx*180+200);
+  });
+}
+showSequential();
+
+// fireworks
+const canvas=document.getElementById('fx'); const ctx=canvas.getContext('2d');
+function resize(){ canvas.width=innerWidth; canvas.height=innerHeight; }
+resize(); window.addEventListener('resize',resize);
+
+let particles=[]; let bigBursts=false;
+function spawnSoft(){ const hue=Math.random()*360;
+  particles.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height*0.5,
+    vx:(Math.random()-0.5)*0.6,vy:(Math.random()-0.5)*0.6,life:80+Math.random()*40,size:1+Math.random()*2,
+    color:`hsl(${hue},80%,70%)`});
+}
+function spawnBurst(x,y,count=80){ const hue=Math.random()*360;
+  for(let i=0;i<count;i++){
+    const a=Math.random()*Math.PI*2;
+    const speed=Math.random()*4+1;
+    particles.push({x,y,vx:Math.cos(a)*speed,vy:Math.sin(a)*speed,
+      life:40+Math.round(Math.random()*40),size:2+Math.random()*3,
+      color:`hsl(${(hue+(Math.random()*40-20)).toFixed(0)},90%,${60+Math.random()*10}%)`});
+  }
+}
+function animate(){ ctx.clearRect(0,0,canvas.width,canvas.height);
+  if(Math.random()<0.18) spawnSoft();
+  for(let i=particles.length-1;i>=0;i--){ const p=particles[i]; p.vy+=0.02; p.x+=p.vx; p.y+=p.vy; p.life--; ctx.fillStyle=p.color; ctx.beginPath(); ctx.arc(p.x,p.y,p.size,0,Math.PI*2); ctx.fill(); p.size*=0.996; if(p.life<=0||p.y>canvas.height+50) particles.splice(i,1);}
+  if(bigBursts && Math.random()<0.22) spawnBurst(Math.random()*canvas.width,Math.random()*canvas.height*0.5,100);
+  requestAnimationFrame(animate);
+}
+animate();
+
+// balloons
+function spawnBalloon(color,left){ const b=document.createElement('div'); b.className='balloon'; b.style.background=color; b.style.left=left+'vw'; b.style.bottom='-120px'; b.style.transition='transform 6s ease-in,bottom 6s linear,opacity 6s linear'; document.body.appendChild(b);
+  const s=document.createElement('div'); s.className='string'; b.appendChild(s);
+  setTimeout(()=>{ b.style.transform='translateY(-120vh)'; b.style.opacity='0'; },40);
+  setTimeout(()=>b.remove(),6800);
+}
+
+// blow detection
+let blown=false;
+function startMicListen(){
+  navigator.mediaDevices.getUserMedia({audio:true}).then(stream=>{
+    const audioCtx=new AudioContext();
+    const mic=audioCtx.createMediaStreamSource(stream);
+    const analyser=audioCtx.createAnalyser(); analyser.fftSize=2048;
+    mic.connect(analyser);
+    const data=new Uint8Array(analyser.frequencyBinCount);
+    function detect(){
+      analyser.getByteFrequencyData(data);
+      let sum=0; for(let i=0;i<data.length;i++) sum+=data[i];
+      const vol=sum/data.length;
+      if(vol>70 && !blown) doBlowSequence();
+      requestAnimationFrame(detect);
+    }
+    detect();
+  }).catch(()=>{ console.warn('Mic unavailable — click cake to blow.'); });
+}
+startMicListen();
+document.getElementById('cake').addEventListener('click',()=>{ if(!blown) doBlowSequence(); });
+
+// blow sequence
+function doBlowSequence(){
+  blown=true;
+  document.querySelectorAll('.flame').forEach(f=>{ f.style.transition='opacity 400ms ease'; f.style.opacity=0; });
+  const blowS=document.getElementById('blowSnd'); const song=document.getElementById('bgSong');
+  if(blowS){ try{ blowS.currentTime=0; blowS.play(); }catch(e){} }
+  setTimeout(()=>{ try{ song.currentTime=0; song.play(); }catch(e){} },300);
+  document.getElementById('blowText').textContent="Awwww you blew it 🥹✨ I swear you’re the cutest.";
+  document.body.classList.add('night');
+  bigBursts=true;
+  spawnBurst(window.innerWidth*0.5,window.innerHeight*0.35,160);
+  spawnBurst(window.innerWidth*0.3,window.innerHeight*0.45,120);
+  spawnBurst(window.innerWidth*0.7,window.innerHeight*0.4,120);
+  const colors=['#ff7fb3','#ffd36f','#a0f0ff','#ffc2ea','#ffd1b8'];
+  for(let i=0;i<8;i++) setTimeout(()=> spawnBalloon(colors[i%colors.length],5+Math.random()*90),i*300);
+  // show next button
+  setTimeout(()=>{ document.getElementById('nextBtn').classList.add('show'); },900);
+}
+
+// flames fade-in
+setTimeout(()=>{ document.querySelectorAll('.flame').forEach((f,idx)=>{ setTimeout(()=>{ f.style.opacity=1; },idx*150+300); }); },3100);
+
+// ensure icing/drip animation
+setTimeout(()=>{ document.querySelectorAll('.icing-strip').forEach(s=>{ s.style.animation='icing 700ms forwards'; }); document.querySelectorAll('.drip').forEach(d=>{ d.style.animation='dripWave 1s ease-in-out infinite alternate'; }); },2600);
+</script>
+</body>
+</html>

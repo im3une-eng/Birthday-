@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Birthday Greeting</title>
+  <style>
+    body {
+      background: #fcd5ce;
+      font-family: 'Arial', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      padding: 20px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* 🌸 Multi-colored Flower Petals */
+    .petal {
+      position: absolute;
+      top: -50px;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      opacity: 0.9;
+      filter: drop-shadow(0 0 6px #ff8cb8);
+      animation: fall 6s linear infinite, sway 2s ease-in-out infinite alternate;
+      pointer-events: none;
+    }
+
+    @keyframes fall {
+      0% { transform: translateY(-50px) rotate(0deg) scale(1); opacity: 1; }
+      100% { transform: translateY(120vh) rotate(260deg) scale(1.3); opacity: 0; }
+    }
+
+    @keyframes sway {
+      0% { margin-left: -15px; }
+      100% { margin-left: 15px; }
+    }
+
+    .card {
+      background-color: #fff0f6;
+      border: 3px dashed #ff69b4;
+      padding: 30px;
+      max-width: 90%;
+      min-width: 300px;
+      width: fit-content;
+      border-radius: 15px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+      animation: fadeIn 1s ease-in-out;
+      overflow-wrap: break-word;
+      text-align: center;
+      position: relative;
+      z-index: 10;
+    }
+
+    .avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 15px;
+      border: 4px solid #ff69b4;
+      box-shadow: 0 0 12px #ff69b4, 0 0 25px #ff9fd3, 0 0 40px #ffcce6;
+      animation: glow 1.8s ease-in-out infinite alternate;
+    }
+
+    @keyframes glow {
+      0% { box-shadow: 0 0 6px #ff69b4, 0 0 12px #ff9fd3, 0 0 18px #ffcce6; }
+      100% { box-shadow: 0 0 18px #ff69b4, 0 0 40px #ff9fd3, 0 0 60px #ffcce6; }
+    }
+
+    .message {
+      font-size: 18px;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      min-height: 120px;
+      border-right: 2px solid black;
+      animation: blink 0.7s steps(1) infinite;
+    }
+    @keyframes blink { 50% { border-color: transparent; } }
+
+    .next-button {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      padding: 12px 20px;
+      background-color: #ff69b4;
+      color: white;
+      border: none;
+      border-radius: 25px;
+      font-size: 16px;
+      text-decoration: none;
+      font-weight: bold;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      transition: 0.3s;
+      z-index: 11;
+    }
+    .next-button:hover { background-color: #ff1493; }
+
+    /* 🎊 Confetti Pieces */
+    .confetti {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background-color: red;
+      opacity: 0.8;
+      pointer-events: none;
+      transform: rotate(0deg);
+      animation: confettiFall 3s linear forwards;
+    }
+
+    @keyframes confettiFall {
+      0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+    }
+
+    /* 🎵 Music Button */
+    .music-btn {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      padding: 12px 20px;
+      background-color: #ff69b4;
+      color: white;
+      border: none;
+      border-radius: 25px;
+      font-size: 16px;
+      font-weight: bold;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      cursor: pointer;
+      z-index: 11;
+    }
+    .music-btn:hover { background-color: #ff1493; }
+
+  </style>
+</head>
+
+<body>
+  <div class="card">
+    <img src="img1.jpeg" class="avatar" alt="Avatar">
+    <div class="message" id="typewriter"></div>
+  </div>
+
+  <a href="cake.html" class="next-button">Move, Drama Queen →</a>
+  <button class="music-btn" id="musicBtn">🎵 Play Music</button>
+  <audio id="bgMusic" loop>
+    <source src="asha.mp3" type="audio/mpeg">
+  </audio>
+
+  <script>
+    // 🖋 Typewriter Effect
+    const text = `Happy Birthday, Coffee! 🎉
+
+You're chaotic, dramatic, funny, and somehow still the most lovable person I know.
+
+Thanks for being YOU.
+
+May God bless you with happiness, love, and everything your heart wishes for! ✨🌸💗
+
+Wishing you the happiest birthday ever! 🎂💖`;
+
+    const container = document.getElementById("typewriter");
+    let i = 0;
+
+    let typing = setInterval(() => {
+      container.innerHTML += text.charAt(i) === '\n' ? '<br>' : text.charAt(i);
+      i++;
+      if (i >= text.length) {
+        clearInterval(typing);
+        container.style.borderRight = "none";
+        createConfetti(100); // 🎊 Confetti burst at end
+      }
+    }, 22);
+
+    // 🌸 Falling Petals
+    function createPetal() {
+      const petal = document.createElement("div");
+      petal.classList.add("petal");
+      petal.style.left = Math.random() * window.innerWidth + "px";
+      const colors = ["#ffb6c1", "#ffc0cb", "#ff69b4", "#ff1493", "#ff8cb8"];
+      petal.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+      document.body.appendChild(petal);
+      setTimeout(() => petal.remove(), 8000);
+    }
+    setInterval(createPetal, 150);
+
+    // 🎊 Confetti
+    function createConfetti(count) {
+      for(let j=0; j<count; j++){
+        const confetti = document.createElement("div");
+        confetti.classList.add("confetti");
+        confetti.style.left = Math.random() * window.innerWidth + "px";
+        confetti.style.backgroundColor = `hsl(${Math.random()*360}, 70%, 60%)`;
+        confetti.style.animationDuration = (2 + Math.random()*2) + "s";
+        document.body.appendChild(confetti);
+        setTimeout(() => confetti.remove(), 4000);
+      }
+    }
+
+    // 🎵 Music Toggle
+    const musicBtn = document.getElementById("musicBtn");
+    const bgMusic = document.getElementById("bgMusic");
+    musicBtn.addEventListener("click", () => {
+      if(bgMusic.paused){
+        bgMusic.play();
+        musicBtn.textContent = "🎵 Pause Music";
+      } else {
+        bgMusic.pause();
+        musicBtn.textContent = "🎵 Play Music";
+      }
+    });
+  </script>
+</body>
+</html>
